@@ -1,0 +1,24 @@
+services:
+  model:
+    volumes:
+      - /home/noah/aic-main/AIC_SUBMISSION:/tmp/AIC_SUBMISSION:ro
+    environment:
+      PYTHONPATH: /tmp/AIC_SUBMISSION
+      AIC_PLUG_AWARE_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/plug_aware_pose_100ep/best_model.pt
+      AIC_PLUG_AWARE_DEVICE: auto
+      AIC_PLUG_AWARE_IMAGE_STRIDE: "4"
+      AIC_PLUG_AWARE_FILTER_ALPHA: "0.35"
+      AIC_PLUG_AWARE_PLUG_FILTER_ALPHA: "0.80"
+      AIC_PLUG_AWARE_FREEZE_PORT_AFTER: "1"
+      AIC_PLUG_AWARE_DEBUG_LOG_EVERY: "60"
+      AIC_KEYPOINT_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/keypoint_center_100ep/best_model.pt
+      AIC_KEYPOINT_DEVICE: auto
+      AIC_KEYPOINT_IMAGE_STRIDE: "4"
+      AIC_KEYPOINT_CORRECTION_GAIN: "0.30"
+      AIC_KEYPOINT_MAX_CORRECTION_M: "0.012"
+      AIC_KEYPOINT_MIN_CONFIDENCE: "0.45"
+      AIC_KEYPOINT_FILTER_ALPHA: "0.30"
+      AIC_KEYPOINT_UPDATE_MIN_Z_OFFSET: "0.050"
+      AIC_KEYPOINT_MAX_DELTA_PX: "300"
+      AIC_KEYPOINT_MAX_RAW_CORRECTION_M: "0.025"
+    command: --ros-args -p policy:=aic_submission.KeypointServoPolicy -p use_sim_time:=true

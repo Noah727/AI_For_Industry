@@ -1,0 +1,8 @@
+services:
+  model:
+    environment:
+      # Biases are in base-link meters and correct the systematic learned-port
+      # offset seen in randomized GT-debug runs. Keys can be port names or
+      # target/port pairs; port names keep the correction task-specialized.
+      AIC_PORT_BIAS_BY_TARGET: "sfp_port_1:-0.024,-0.006,0.000;sfp_port_0:0.021,-0.004,0.000;sc_port_base:-0.030,0.000,0.000"
+      AIC_PORT_BIAS_AFTER_Z: "0.20"

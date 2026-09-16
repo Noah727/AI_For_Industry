@@ -1,0 +1,30 @@
+services:
+  eval:
+    command: gazebo_gui:=false launch_rviz:=false ground_truth:=false start_aic_engine:=true shutdown_on_aic_engine_exit:=true model_discovery_timeout_seconds:=600 aic_engine_config_file:=/tmp/random_eval.yaml
+    volumes:
+      - ${AIC_RANDOM_CONFIG:?set AIC_RANDOM_CONFIG to an absolute config path}:/tmp/random_eval.yaml:ro
+  model:
+    volumes:
+      - /home/noah/aic-main/AIC_SUBMISSION:/tmp/AIC_SUBMISSION:ro
+      - /home/noah/aic-main/AIC_SUBMISSION/aic_submission:/ws_aic/src/aic/aic_submission:ro
+    environment:
+      PYTHONPATH: /tmp/AIC_SUBMISSION:/ws_aic/src/aic
+      AIC_PERCEPTION_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/relative_port_pose_100ep_rich/best_model.pt
+      AIC_TARGET_POSE_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/target_pose_100ep/best_model.pt
+      AIC_PLUG_AWARE_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/plug_aware_pose_100ep/best_model.pt
+      AIC_PERCEPTION_DEVICE: auto
+      AIC_PERCEPTION_IMAGE_STRIDE: "4"
+      AIC_PERCEPTION_USE_LEARNED_PLUG: "1"
+      AIC_PERCEPTION_LEARNED_PLUG_MODE: xy
+      AIC_PERCEPTION_LEARNED_PLUG_AFTER_Z: "0.03"
+      AIC_PERCEPTION_LEARNED_PLUG_GATE_M: "0.025"
+      AIC_PERCEPTION_PLUG_FILTER_ALPHA: "0.80"
+      AIC_PORT_FILTER_ALPHA: "0.45"
+      AIC_PERCEPTION_FREEZE_PORT_AFTER: "20"
+      AIC_PERCEPTION_ORIENTATION_SOURCE: fixed
+      AIC_SFP_FINAL_Z_OFFSET: "-0.015"
+      AIC_SC_FINAL_Z_OFFSET: "-0.015"
+      AIC_SFP_LATERAL_SEARCH_PATTERN: ""
+      AIC_SC_LATERAL_SEARCH_PATTERN: ""
+      AIC_DEBUG_LOG_EVERY: "20"
+    command: --ros-args -p policy:=aic_submission.PerceptionGuidedPolicy -p use_sim_time:=true

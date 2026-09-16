@@ -1,0 +1,17 @@
+services:
+  model:
+    command: --ros-args -p policy:=aic_submission.HybridPerceptionPolicy -p use_sim_time:=true
+    environment:
+      AIC_HYBRID_PORT_CHECKPOINT: /ws_aic/src/aic/runs/relative_port_pose_100ep/best_model.pt
+      AIC_HYBRID_PORT_DEVICE: auto
+      AIC_HYBRID_PORT_IMAGE_STRIDE: 4
+      AIC_HYBRID_PORT_FILTER_ALPHA: 0.35
+      AIC_HYBRID_FREEZE_PORT_AFTER: 100
+      AIC_HYBRID_PORT_QUAT_SOURCE: fixed
+      AIC_PLUG_AWARE_CHECKPOINT: /ws_aic/src/aic/runs/plug_aware_pose_100ep/best_model.pt
+      AIC_PLUG_AWARE_DEVICE: auto
+      AIC_PLUG_AWARE_IMAGE_STRIDE: 4
+      AIC_PLUG_AWARE_PLUG_FILTER_ALPHA: 0.80
+      AIC_PLUG_AWARE_CLAMP_PORT_Z: 1
+      AIC_PLUG_AWARE_CLAMP_PORT_XY: 1
+      AIC_PLUG_AWARE_DEBUG_LOG_EVERY: 20

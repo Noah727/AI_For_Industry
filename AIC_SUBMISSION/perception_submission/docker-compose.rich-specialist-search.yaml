@@ -1,0 +1,17 @@
+services:
+  model:
+    environment:
+      # Use the specialist + bias estimate as the center, then probe locally at
+      # the mouth of the connector. This is deliberately small enough to avoid
+      # big off-limit contacts but wide enough to cover the remaining 2-3 cm
+      # systematic perception error observed in randomized debug runs.
+      AIC_SFP_FINAL_Z_OFFSET: "-0.045"
+      AIC_SC_FINAL_Z_OFFSET: "-0.028"
+      AIC_LATERAL_SEARCH_HOLD_STEPS: "5"
+      AIC_LATERAL_SEARCH_RETRACT_STEPS: "5"
+      AIC_LATERAL_SEARCH_INSERT_STEP: "0.003"
+      AIC_SFP_LATERAL_SEARCH_ENTRY_Z_OFFSET: "0.045"
+      AIC_SC_LATERAL_SEARCH_ENTRY_Z_OFFSET: "0.030"
+      AIC_LATERAL_SEARCH_KEEP_LAST_BIAS: "0"
+      AIC_SFP_LATERAL_SEARCH_PATTERN: "0.000,0.000,0.000;0.012,0.000,0.000;-0.012,0.000,0.000;0.000,0.012,0.000;0.000,-0.012,0.000;0.020,0.000,0.000;-0.020,0.000,0.000;0.012,0.012,0.000;0.012,-0.012,0.000;-0.012,0.012,0.000;-0.012,-0.012,0.000;0.000,0.000,0.000"
+      AIC_SC_LATERAL_SEARCH_PATTERN: "0.000,0.000,0.000;0.010,0.000,0.000;-0.010,0.000,0.000;0.000,0.010,0.000;0.000,-0.010,0.000;0.016,0.000,0.000;-0.016,0.000,0.000;0.010,0.010,0.000;0.010,-0.010,0.000;-0.010,0.010,0.000;-0.010,-0.010,0.000;0.000,0.000,0.000"

@@ -1,0 +1,8 @@
+services:
+  eval:
+    command: gazebo_gui:=false launch_rviz:=false ground_truth:=true start_aic_engine:=true shutdown_on_aic_engine_exit:=true model_discovery_timeout_seconds:=600 aic_engine_config_file:=/tmp/random_3_trial_perception.yaml
+  model:
+    environment:
+      AIC_USE_GROUND_TRUTH_PORT: 1
+      AIC_DEBUG_GROUND_TRUTH: 1
+      AIC_PERCEPTION_FREEZE_PORT_AFTER: 0

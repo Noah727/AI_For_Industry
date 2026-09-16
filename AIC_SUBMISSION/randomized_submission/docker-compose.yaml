@@ -1,0 +1,39 @@
+name: aic-randomized-policy
+
+services:
+  eval:
+    image: ghcr.io/intrinsic-dev/aic/aic_eval
+    command: >-
+      gazebo_gui:=false
+      launch_rviz:=false
+      ground_truth:=false
+      start_aic_engine:=true
+      shutdown_on_aic_engine_exit:=true
+      model_discovery_timeout_seconds:=600
+      aic_engine_config_file:=/tmp/random_eval.yaml
+    gpus: all
+    environment:
+      AIC_EVAL_PASSWD: local_eval
+      AIC_MODEL_PASSWD: local_model
+    volumes:
+      - ../generated_configs/random3_rich_seed501.yaml:/tmp/random_eval.yaml:ro
+      - randomized_results:/root/aic_results
+
+  model:
+    image: aic-perception-guided:public
+    build:
+      context: ../..
+      dockerfile: AIC_SUBMISSION/perception_submission/docker/aic_model_perception/Dockerfile
+    depends_on:
+      - eval
+    gpus: all
+    environment:
+      AIC_ROUTER_ADDR: eval:7447
+      AIC_MODEL_PASSWD: local_model
+
+networks:
+  default:
+    internal: true
+
+volumes:
+  randomized_results:

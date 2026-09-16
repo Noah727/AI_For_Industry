@@ -1,0 +1,5 @@
+runs/
+results/
+password.md
+*.pyc
+__pycache__/

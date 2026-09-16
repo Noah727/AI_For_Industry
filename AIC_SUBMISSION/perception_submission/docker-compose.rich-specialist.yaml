@@ -1,0 +1,7 @@
+services:
+  model:
+    environment:
+      AIC_SFP_PORT0_PERCEPTION_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/relative_port_pose_100ep_rich_sfp_port0/best_model.pt
+      AIC_SFP_PORT1_PERCEPTION_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/relative_port_pose_100ep_rich_sfp_port1/best_model.pt
+      AIC_SC_PERCEPTION_CHECKPOINT: /tmp/AIC_SUBMISSION/runs/relative_port_pose_100ep_rich_sc/best_model.pt
+      AIC_PERCEPTION_USE_KEYPOINT: "0"

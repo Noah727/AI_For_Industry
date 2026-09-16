@@ -1,3 +1,26 @@
+# Buckeye Autonomous Robots AIC Project
+
+This repository contains Noah's qualification-phase work for the 2026
+Intrinsic AI for Industry Challenge. It preserves the official AIC toolkit and
+adds the perception training pipeline, randomized-scene configurations,
+learned cable-insertion policy, and reproducible submission container under
+[`AIC_SUBMISSION/`](./AIC_SUBMISSION/).
+
+The best randomized three-trial local evaluation scored
+`130.50678519523254` with all three tasks completing. The model was not
+entered before the qualification deadline, so this is a local result rather
+than an official leaderboard score.
+
+See [AIC_SUBMISSION/README.md](./AIC_SUBMISSION/README.md) for the project
+overview, model architecture, training workflow, limitations, and reproduction
+instructions.
+
+This work builds on the official
+[`intrinsic-dev/aic`](https://github.com/intrinsic-dev/aic) toolkit. Upstream
+code remains under its original Apache-2.0 and BSD-3-Clause licenses.
+
+---
+
 # AI for Industry Challenge Toolkit
 
 [![build](https://github.com/intrinsic-dev/aic/actions/workflows/build.yml/badge.svg)](https://github.com/intrinsic-dev/aic/actions/workflows/build.yml)

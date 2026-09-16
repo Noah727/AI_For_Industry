@@ -1,0 +1,7 @@
+services:
+  model:
+    environment:
+      AIC_PERCEPTION_FREEZE_PORT_AFTER: "0"
+      AIC_PORT_FILTER_ALPHA: "0.80"
+      AIC_PERCEPTION_USE_LEARNED_PLUG: "0"
+      AIC_DEBUG_LOG_EVERY: "40"

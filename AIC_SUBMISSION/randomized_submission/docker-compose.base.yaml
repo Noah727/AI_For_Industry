@@ -1,0 +1,55 @@
+name: aic-perception-submission
+services:
+  eval:
+    image: ghcr.io/intrinsic-dev/aic/aic_eval
+    build:
+      dockerfile: docker/aic_eval/Dockerfile
+      context: ../..
+    command: gazebo_gui:=false launch_rviz:=false ground_truth:=false start_aic_engine:=true shutdown_on_aic_engine_exit:=true model_discovery_timeout_seconds:=600 aic_engine_config_file:=/tmp/random_3_trial_perception.yaml
+    gpus: all
+    networks:
+      - default
+    environment:
+      AIC_EVAL_PASSWD: CHANGE_IN_PROD
+      AIC_MODEL_PASSWD: CHANGE_IN_PROD
+    volumes:
+      - /home/noah/aic-main/AIC_SUBMISSION/generated_configs/random_3_trial_perception.yaml:/tmp/random_3_trial_perception.yaml:ro
+      - /tmp/aic_perception_compose_results:/root/aic_results
+  model:
+    image: aic-perception-guided:v1
+    build:
+      dockerfile: AIC_SUBMISSION/perception_submission/docker/aic_model_perception/Dockerfile
+      context: ../..
+    gpus: all
+    networks:
+      - default
+    environment:
+      RMW_IMPLEMENTATION: rmw_zenoh_cpp
+      ZENOH_ROUTER_CHECK_ATTEMPTS: -1
+      AIC_ROUTER_ADDR: eval:7447
+      AIC_MODEL_PASSWD: CHANGE_IN_PROD
+      AIC_PERCEPTION_CHECKPOINT: /ws_aic/src/aic/runs/relative_port_pose_100ep/best_model.pt
+      AIC_TARGET_POSE_CHECKPOINT: /ws_aic/src/aic/runs/target_pose_100ep/best_model.pt
+      AIC_PERCEPTION_DEVICE: auto
+      AIC_PERCEPTION_IMAGE_STRIDE: 4
+      AIC_PERCEPTION_USE_LEARNED_PLUG: 1
+      AIC_PERCEPTION_LEARNED_PLUG_MODE: xy
+      AIC_PERCEPTION_LEARNED_PLUG_AFTER_Z: 0.03
+      AIC_PERCEPTION_LEARNED_PLUG_GATE_M: 0.025
+      AIC_PERCEPTION_PLUG_FILTER_ALPHA: 0.80
+      AIC_PORT_FILTER_ALPHA: 0.45
+      AIC_PERCEPTION_FREEZE_PORT_AFTER: 20
+      AIC_PERCEPTION_ORIENTATION_SOURCE: fixed
+      AIC_SFP_FINAL_Z_OFFSET: -0.015
+      AIC_SC_FINAL_Z_OFFSET: -0.015
+      AIC_SFP_LATERAL_SEARCH_AMPLITUDE: 0.0
+      AIC_SC_LATERAL_SEARCH_AMPLITUDE: 0.0
+      AIC_SFP_LATERAL_SEARCH_PATTERN: ""
+      AIC_SC_LATERAL_SEARCH_PATTERN: ""
+      AIC_LATERAL_SEARCH_HOLD_STEPS: 3
+      AIC_LATERAL_SEARCH_KEEP_LAST_BIAS: 0
+      AIC_PORT_BIAS_BY_TARGET: ""
+      AIC_DEBUG_LOG_EVERY: 20
+networks:
+  default:
+    internal: true

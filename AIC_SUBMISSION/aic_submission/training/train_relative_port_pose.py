@@ -19,7 +19,9 @@ from aic_submission.perception.relative_dataset import (
     RelativePortPoseDataset,
     compute_relative_target_stats,
 )
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 def _cap_samples(
@@ -110,7 +112,9 @@ def run_epoch(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100"))
+    parser.add_argument(
+        "--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100")
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -139,7 +143,9 @@ def main() -> int:
     rng = random.Random(args.seed)
     torch.manual_seed(args.seed)
 
-    samples = discover_teacher_samples(args.root, task_vector_mode=args.task_vector_mode)
+    samples = discover_teacher_samples(
+        args.root, task_vector_mode=args.task_vector_mode
+    )
     samples = _filter_samples(samples, args.task_filter)
     if not samples:
         raise RuntimeError(

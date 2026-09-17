@@ -107,7 +107,9 @@ class FinalDefaultPortPolicy(Policy):
         return (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]))
 
     @staticmethod
-    def _wxyz_to_xyzw(quat: tuple[float, float, float, float] | np.ndarray) -> np.ndarray:
+    def _wxyz_to_xyzw(
+        quat: tuple[float, float, float, float] | np.ndarray
+    ) -> np.ndarray:
         quat_array = np.asarray(quat, dtype=np.float64)
         return FinalDefaultPortPolicy._normalize_quat_xyzw(
             np.array(
@@ -216,12 +218,9 @@ class FinalDefaultPortPolicy(Policy):
         tcp_to_plug_translation = self.TCP_TO_PLUG_TRANSLATION_BY_KEY[key]
         tcp_to_plug_quat = self.TCP_TO_PLUG_QUAT_XYZW_BY_KEY[key]
 
-        plug_xyz = (
-            tcp_xyz
-            + self._quat_xyzw_to_matrix(tcp_quat)
-            .dot(tcp_to_plug_translation)
-            .astype(np.float32)
-        )
+        plug_xyz = tcp_xyz + self._quat_xyzw_to_matrix(tcp_quat).dot(
+            tcp_to_plug_translation
+        ).astype(np.float32)
 
         q_tcp = self._xyzw_to_wxyz(tcp_quat)
         q_tcp_to_plug = self._xyzw_to_wxyz(tcp_to_plug_quat)
@@ -231,12 +230,8 @@ class FinalDefaultPortPolicy(Policy):
         default_xyz, default_quat = self.DEFAULT_PORTS[key]
         control_xyz = (
             default_xyz
-            + self.CONTROL_PORT_BIAS_BY_KEY.get(
-                key, np.zeros(3, dtype=np.float32)
-            )
-            + self._runtime_control_bias_by_key.get(
-                key, np.zeros(3, dtype=np.float32)
-            )
+            + self.CONTROL_PORT_BIAS_BY_KEY.get(key, np.zeros(3, dtype=np.float32))
+            + self._runtime_control_bias_by_key.get(key, np.zeros(3, dtype=np.float32))
         )
         return (
             control_xyz.astype(np.float32),
@@ -313,9 +308,7 @@ class FinalDefaultPortPolicy(Policy):
             ],
             dtype=np.float32,
         )
-        blend_xyz = (
-            position_fraction * target_xyz + (1.0 - position_fraction) * tcp_xyz
-        )
+        blend_xyz = position_fraction * target_xyz + (1.0 - position_fraction) * tcp_xyz
 
         return Pose(
             position=Point(
@@ -383,8 +376,7 @@ class FinalDefaultPortPolicy(Policy):
             )
         except Exception:
             self.get_logger().error(
-                "Unhandled FinalDefaultPortPolicy exception:\n"
-                + traceback.format_exc()
+                "Unhandled FinalDefaultPortPolicy exception:\n" + traceback.format_exc()
             )
             send_feedback("final default-port policy exception")
             return False
@@ -421,7 +413,9 @@ class FinalDefaultPortPolicy(Policy):
                 slerp_fraction=interp_fraction,
                 reset_xy_integrator=True,
             ):
-                self.get_logger().error("Failed while moving to calibrated approach pose.")
+                self.get_logger().error(
+                    "Failed while moving to calibrated approach pose."
+                )
                 return False
             self.sleep_for(0.05)
 
@@ -463,7 +457,9 @@ class FinalDefaultPortPolicy(Policy):
                         task,
                         z_offset=z_offset,
                     ):
-                        self.get_logger().error("Failed during lateral insertion search.")
+                        self.get_logger().error(
+                            "Failed during lateral insertion search."
+                        )
                         return False
                     self.sleep_for(0.05)
             self._runtime_control_bias_by_key[key] = np.zeros(3, dtype=np.float32)
@@ -496,8 +492,7 @@ class FinalDefaultPortPolicy(Policy):
                 and float(delta[2]) <= float(target_z_above_port)
             ):
                 self.get_logger().info(
-                    "Adaptive settle reached target z margin: "
-                    f"dz={delta[2]:.4f}"
+                    "Adaptive settle reached target z margin: " f"dz={delta[2]:.4f}"
                 )
                 break
             self.sleep_for(0.25)

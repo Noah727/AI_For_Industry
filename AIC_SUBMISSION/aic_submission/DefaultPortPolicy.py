@@ -157,12 +157,9 @@ class DefaultPortPolicy(PlugAwarePolicy):
             tcp_to_plug_translation = self._cached_tcp_to_plug_translation_by_key[key]
             tcp_to_plug_quat = self._cached_tcp_to_plug_quat_by_key[key]
 
-        rigid_plug_xyz = (
-            tcp_xyz
-            + self._quat_xyzw_to_matrix(tcp_quat)
-            .dot(tcp_to_plug_translation)
-            .astype(np.float32)
-        )
+        rigid_plug_xyz = tcp_xyz + self._quat_xyzw_to_matrix(tcp_quat).dot(
+            tcp_to_plug_translation
+        ).astype(np.float32)
 
         q_tcp = self._xyzw_to_wxyz(tcp_quat)
         q_tcp_to_plug = self._xyzw_to_wxyz(tcp_to_plug_quat)
@@ -180,12 +177,8 @@ class DefaultPortPolicy(PlugAwarePolicy):
         default_xyz, default_quat = self.DEFAULT_PORTS[key]
         control_xyz = (
             default_xyz
-            + self.CONTROL_PORT_BIAS_BY_KEY.get(
-                key, np.zeros(3, dtype=np.float32)
-            )
-            + self._runtime_control_bias_by_key.get(
-                key, np.zeros(3, dtype=np.float32)
-            )
+            + self.CONTROL_PORT_BIAS_BY_KEY.get(key, np.zeros(3, dtype=np.float32))
+            + self._runtime_control_bias_by_key.get(key, np.zeros(3, dtype=np.float32))
         )
         return (
             control_xyz.astype(np.float32),
@@ -302,8 +295,7 @@ class DefaultPortPolicy(PlugAwarePolicy):
                 and float(delta[2]) <= float(target_z_above_port)
             ):
                 self.get_logger().info(
-                    "Adaptive settle reached target z margin: "
-                    f"dz={delta[2]:.4f}"
+                    "Adaptive settle reached target z margin: " f"dz={delta[2]:.4f}"
                 )
                 break
             self.sleep_for(0.25)

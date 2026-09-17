@@ -97,12 +97,8 @@ class ScenePoseDataset(Dataset):
         port_xyz = data["port_pose_base"][:3].astype(np.float32)
         plug_xyz = data["plug_pose_base"][:3].astype(np.float32)
         plug_relative = plug_xyz - tcp_xyz
-        port_quat = _canonical_quat_xyzw(data["port_pose_base"][3:7]).astype(
-            np.float32
-        )
-        plug_quat = _canonical_quat_xyzw(data["plug_pose_base"][3:7]).astype(
-            np.float32
-        )
+        port_quat = _canonical_quat_xyzw(data["port_pose_base"][3:7]).astype(np.float32)
+        plug_quat = _canonical_quat_xyzw(data["plug_pose_base"][3:7]).astype(np.float32)
         target_raw = np.concatenate(
             [port_xyz, plug_relative, port_quat, plug_quat],
             axis=0,

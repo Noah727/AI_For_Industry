@@ -18,7 +18,9 @@ from aic_submission.perception.keypoint_dataset import (
 from aic_submission.perception.keypoint_model import TinyKeypointUNet
 
 
-def masked_heatmap_loss(logits: torch.Tensor, target: torch.Tensor, valid: torch.Tensor) -> torch.Tensor:
+def masked_heatmap_loss(
+    logits: torch.Tensor, target: torch.Tensor, valid: torch.Tensor
+) -> torch.Tensor:
     pred = torch.sigmoid(logits)
     mask = valid[:, :, None, None]
     loss = (pred - target).pow(2) * mask
@@ -143,7 +145,9 @@ def main() -> int:
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = TinyKeypointUNet(out_channels=2, output_stride=args.heatmap_stride).to(device)
+    model = TinyKeypointUNet(out_channels=2, output_stride=args.heatmap_stride).to(
+        device
+    )
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1.0e-4)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)

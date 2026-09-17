@@ -197,8 +197,7 @@ def generate_config(
         yaml.safe_dump(config, f, sort_keys=False)
 
     print(
-        f"Wrote {len(trials)} trials "
-        f"({num_sfp} sfp, {num_sc} sc) to {output_path}"
+        f"Wrote {len(trials)} trials " f"({num_sfp} sfp, {num_sc} sc) to {output_path}"
     )
 
 

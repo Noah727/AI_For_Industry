@@ -16,11 +16,15 @@ from aic_submission.perception.relative_dataset import (
     DEFAULT_CAMERA_KEYS,
     task_name_from_id,
 )
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 from aic_submission.perception.scene_pose_dataset import ScenePoseDataset
 
 
-def _cap_samples(train_samples: list, val_samples: list, max_samples: int, rng: random.Random):
+def _cap_samples(
+    train_samples: list, val_samples: list, max_samples: int, rng: random.Random
+):
     if max_samples <= 0:
         return train_samples, val_samples
     train_fraction = len(train_samples) / max(1, len(train_samples) + len(val_samples))
@@ -62,7 +66,9 @@ def main() -> int:
     root = args.root or Path(config.get("root", "/tmp/aic_teacher_dataset_100"))
     camera_keys = tuple(config.get("camera_keys", DEFAULT_CAMERA_KEYS))
     max_samples = (
-        args.max_samples if args.max_samples is not None else int(config.get("max_samples", 0))
+        args.max_samples
+        if args.max_samples is not None
+        else int(config.get("max_samples", 0))
     )
     seed = args.seed if args.seed is not None else int(config.get("seed", 19))
     zero_state = bool(config.get("zero_state", True))
@@ -70,7 +76,9 @@ def main() -> int:
     samples = discover_teacher_samples(root)
     rng = random.Random(seed)
     train_samples, val_samples = split_by_episode(samples)
-    train_samples, val_samples = _cap_samples(train_samples, val_samples, max_samples, rng)
+    train_samples, val_samples = _cap_samples(
+        train_samples, val_samples, max_samples, rng
+    )
     if args.split == "train":
         eval_samples = train_samples
     elif args.split == "all":
@@ -94,7 +102,9 @@ def main() -> int:
         pin_memory=torch.cuda.is_available(),
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MultiCameraRelativePortPoseRegressor(num_cameras=len(camera_keys), output_dim=14).to(device)
+    model = MultiCameraRelativePortPoseRegressor(
+        num_cameras=len(camera_keys), output_dim=14
+    ).to(device)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     target_mean = torch.tensor(target_stats["mean"], dtype=torch.float32, device=device)
@@ -119,12 +129,20 @@ def main() -> int:
             pred = pred_norm * target_std + target_mean
             pred_port = pred[:, :3]
             pred_plug = tcp_xyz + pred[:, 3:6]
-            port_batch = torch.linalg.vector_norm(pred_port - port_xyz, dim=-1).cpu().numpy()
-            plug_batch = torch.linalg.vector_norm(pred_plug - plug_xyz, dim=-1).cpu().numpy()
-            gap_batch = torch.linalg.vector_norm(
-                (pred_port - pred_plug) - (port_xyz - plug_xyz),
-                dim=-1,
-            ).cpu().numpy()
+            port_batch = (
+                torch.linalg.vector_norm(pred_port - port_xyz, dim=-1).cpu().numpy()
+            )
+            plug_batch = (
+                torch.linalg.vector_norm(pred_plug - plug_xyz, dim=-1).cpu().numpy()
+            )
+            gap_batch = (
+                torch.linalg.vector_norm(
+                    (pred_port - pred_plug) - (port_xyz - plug_xyz),
+                    dim=-1,
+                )
+                .cpu()
+                .numpy()
+            )
             task_ids = batch["task_id"].cpu().numpy()
             port_errors.extend(float(error) for error in port_batch)
             plug_errors.extend(float(error) for error in plug_batch)
@@ -145,8 +163,12 @@ def main() -> int:
         "port_summary": _summarize(port_errors),
         "plug_summary": _summarize(plug_errors),
         "gap_summary": _summarize(gap_errors),
-        "gap_by_task": {name: _summarize(errors) for name, errors in sorted(by_task_gap.items())},
-        "gap_by_stage": {name: _summarize(errors) for name, errors in sorted(by_stage_gap.items())},
+        "gap_by_task": {
+            name: _summarize(errors) for name, errors in sorted(by_task_gap.items())
+        },
+        "gap_by_stage": {
+            name: _summarize(errors) for name, errors in sorted(by_stage_gap.items())
+        },
     }
     print(json.dumps(report, indent=2))
     if args.output is not None:

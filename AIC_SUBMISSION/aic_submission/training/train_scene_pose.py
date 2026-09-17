@@ -12,14 +12,18 @@ from torch.utils.data import DataLoader
 
 from aic_submission.perception.dataset import discover_teacher_samples, split_by_episode
 from aic_submission.perception.relative_dataset import DEFAULT_CAMERA_KEYS
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 from aic_submission.perception.scene_pose_dataset import (
     ScenePoseDataset,
     compute_scene_target_stats,
 )
 
 
-def _cap_samples(train_samples: list, val_samples: list, max_samples: int, rng: random.Random):
+def _cap_samples(
+    train_samples: list, val_samples: list, max_samples: int, rng: random.Random
+):
     if max_samples <= 0:
         return train_samples, val_samples
     train_fraction = len(train_samples) / max(1, len(train_samples) + len(val_samples))
@@ -58,8 +62,12 @@ def run_epoch(model, loader, criterion, device, optimizer=None) -> float:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100"))
-    parser.add_argument("--output-dir", type=Path, default=Path("AIC_SUBMISSION/runs/scene_pose_100ep"))
+    parser.add_argument(
+        "--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100")
+    )
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("AIC_SUBMISSION/runs/scene_pose_100ep")
+    )
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--lr", type=float, default=1.0e-4)
@@ -76,7 +84,9 @@ def main() -> int:
     if not samples:
         raise RuntimeError(f"No teacher samples found under {args.root}")
     train_samples, val_samples = split_by_episode(samples)
-    train_samples, val_samples = _cap_samples(train_samples, val_samples, args.max_samples, rng)
+    train_samples, val_samples = _cap_samples(
+        train_samples, val_samples, args.max_samples, rng
+    )
     target_stats = compute_scene_target_stats(train_samples)
 
     camera_keys = DEFAULT_CAMERA_KEYS
@@ -111,7 +121,9 @@ def main() -> int:
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MultiCameraRelativePortPoseRegressor(num_cameras=len(camera_keys), output_dim=14).to(device)
+    model = MultiCameraRelativePortPoseRegressor(
+        num_cameras=len(camera_keys), output_dim=14
+    ).to(device)
     criterion = nn.SmoothL1Loss(beta=0.1)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1.0e-4)
 
@@ -152,8 +164,12 @@ def main() -> int:
     for epoch in range(1, args.epochs + 1):
         train_loss = run_epoch(model, train_loader, criterion, device, optimizer)
         val_loss = run_epoch(model, val_loader, criterion, device)
-        print(f"epoch {epoch:03d} train_smooth_l1={train_loss:.6f} val_smooth_l1={val_loss:.6f}")
-        history["epochs"].append({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss})
+        print(
+            f"epoch {epoch:03d} train_smooth_l1={train_loss:.6f} val_smooth_l1={val_loss:.6f}"
+        )
+        history["epochs"].append(
+            {"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss}
+        )
         if val_loss < best_val:
             best_val = val_loss
             torch.save(

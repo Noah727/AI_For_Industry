@@ -103,12 +103,8 @@ class PlugAwarePoseDataset(Dataset):
         tcp_xyz = data["tcp_pose_base"][:3].astype(np.float32)
         port_relative = port_xyz - tcp_xyz
         plug_relative = plug_xyz - tcp_xyz
-        port_quat = _canonical_quat_xyzw(data["port_pose_base"][3:7]).astype(
-            np.float32
-        )
-        plug_quat = _canonical_quat_xyzw(data["plug_pose_base"][3:7]).astype(
-            np.float32
-        )
+        port_quat = _canonical_quat_xyzw(data["port_pose_base"][3:7]).astype(np.float32)
+        plug_quat = _canonical_quat_xyzw(data["plug_pose_base"][3:7]).astype(np.float32)
         target_raw = np.concatenate(
             [port_relative, plug_relative, port_quat, plug_quat],
             axis=0,

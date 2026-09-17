@@ -17,7 +17,9 @@ from aic_submission.perception.relative_dataset import (
     DEFAULT_CAMERA_KEYS,
     task_name_from_id,
 )
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 def _cap_samples(

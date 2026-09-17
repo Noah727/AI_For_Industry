@@ -137,7 +137,9 @@ def main() -> int:
             "y": float(np.mean(axis_mm[:, 1])),
             "z": float(np.mean(axis_mm[:, 2])),
         },
-        "by_task": {name: _summarize(errors) for name, errors in sorted(by_task.items())},
+        "by_task": {
+            name: _summarize(errors) for name, errors in sorted(by_task.items())
+        },
         "by_stage": {
             name: _summarize(errors) for name, errors in sorted(by_stage.items())
         },

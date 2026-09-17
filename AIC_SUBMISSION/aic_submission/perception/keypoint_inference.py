@@ -184,7 +184,9 @@ class KeypointHeatmapInference:
         return _matrix_to_pose_array(base_to_camera)
 
     @staticmethod
-    def point_base_to_camera(point_base: np.ndarray, camera_pose_base: np.ndarray) -> np.ndarray:
+    def point_base_to_camera(
+        point_base: np.ndarray, camera_pose_base: np.ndarray
+    ) -> np.ndarray:
         rotation = _quat_xyzw_to_matrix(camera_pose_base[3:7])
         translation = camera_pose_base[:3].astype(np.float32)
         return rotation.T @ (point_base[:3].astype(np.float32) - translation)

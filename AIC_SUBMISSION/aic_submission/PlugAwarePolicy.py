@@ -51,7 +51,9 @@ class PlugAwarePolicy(Policy):
             if self._use_scene_pose_model
             else "plug_aware_pose_100ep"
         )
-        default_checkpoint = Path(__file__).resolve().parents[1] / "runs" / run_name / "best_model.pt"
+        default_checkpoint = (
+            Path(__file__).resolve().parents[1] / "runs" / run_name / "best_model.pt"
+        )
         checkpoint_path = Path(
             os.environ.get("AIC_PLUG_AWARE_CHECKPOINT", str(default_checkpoint))
         )
@@ -59,7 +61,11 @@ class PlugAwarePolicy(Policy):
         if checkpoint_path.exists() or not self._use_ground_truth_pose:
             device = os.environ.get("AIC_PLUG_AWARE_DEVICE", "auto")
             image_stride = int(os.environ.get("AIC_PLUG_AWARE_IMAGE_STRIDE", "4"))
-            inference_cls = ScenePoseInference if self._use_scene_pose_model else PlugAwarePoseInference
+            inference_cls = (
+                ScenePoseInference
+                if self._use_scene_pose_model
+                else PlugAwarePoseInference
+            )
             self._predictor = inference_cls(
                 checkpoint_path,
                 device=device,
@@ -83,7 +89,9 @@ class PlugAwarePolicy(Policy):
                 "for local diagnostics, not final evaluation."
             )
 
-        self._filter_alpha = float(os.environ.get("AIC_PLUG_AWARE_FILTER_ALPHA", "0.35"))
+        self._filter_alpha = float(
+            os.environ.get("AIC_PLUG_AWARE_FILTER_ALPHA", "0.35")
+        )
         self._plug_filter_alpha = float(
             os.environ.get("AIC_PLUG_AWARE_PLUG_FILTER_ALPHA", "0.80")
         )
@@ -132,7 +140,9 @@ class PlugAwarePolicy(Policy):
         return (float(quat[3]), float(quat[0]), float(quat[1]), float(quat[2]))
 
     @staticmethod
-    def _wxyz_to_xyzw(quat: tuple[float, float, float, float] | np.ndarray) -> np.ndarray:
+    def _wxyz_to_xyzw(
+        quat: tuple[float, float, float, float] | np.ndarray
+    ) -> np.ndarray:
         quat_array = np.asarray(quat, dtype=np.float64)
         return PlugAwarePolicy._normalize_quat_xyzw(
             np.array(
@@ -163,7 +173,9 @@ class PlugAwarePolicy(Policy):
     @staticmethod
     def _tcp_xyz_from_observation(obs) -> np.ndarray:
         pose = obs.controller_state.tcp_pose
-        return np.array([pose.position.x, pose.position.y, pose.position.z], dtype=np.float32)
+        return np.array(
+            [pose.position.x, pose.position.y, pose.position.z], dtype=np.float32
+        )
 
     def _wait_for_observation(
         self, get_observation: GetObservationCallback, timeout_sec: float = 10.0
@@ -203,7 +215,9 @@ class PlugAwarePolicy(Policy):
         )
         return xyz, self._normalize_quat_xyzw(quat).astype(np.float32)
 
-    def _predict_pose(self, obs, task: Task) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def _predict_pose(
+        self, obs, task: Task
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         gt_port = None
         gt_plug = None
         if self._use_ground_truth_pose or self._debug_ground_truth:
@@ -226,9 +240,18 @@ class PlugAwarePolicy(Policy):
         else:
             raise RuntimeError("No plug-aware pose estimate is available.")
 
-        if self._debug_ground_truth and learned is not None and gt_port is not None and gt_plug is not None:
-            port_error_mm = float(np.linalg.norm(learned.port_xyz - gt_port[0]) * 1000.0)
-            plug_error_mm = float(np.linalg.norm(learned.plug_xyz - gt_plug[0]) * 1000.0)
+        if (
+            self._debug_ground_truth
+            and learned is not None
+            and gt_port is not None
+            and gt_plug is not None
+        ):
+            port_error_mm = float(
+                np.linalg.norm(learned.port_xyz - gt_port[0]) * 1000.0
+            )
+            plug_error_mm = float(
+                np.linalg.norm(learned.plug_xyz - gt_plug[0]) * 1000.0
+            )
             self._debug_port_errors_mm.append(port_error_mm)
             self._debug_plug_errors_mm.append(plug_error_mm)
             if self._prediction_count % self._debug_log_every == 0:
@@ -253,7 +276,10 @@ class PlugAwarePolicy(Policy):
             and self._filtered_port_xyz is not None
         )
         if not freeze_port:
-            if self._clamp_port_xy and task.port_type in self.PORT_XY_LIMITS_BY_PORT_TYPE:
+            if (
+                self._clamp_port_xy
+                and task.port_type in self.PORT_XY_LIMITS_BY_PORT_TYPE
+            ):
                 x_limits, y_limits = self.PORT_XY_LIMITS_BY_PORT_TYPE[task.port_type]
                 port_xyz = port_xyz.copy()
                 port_xyz[0] = np.clip(port_xyz[0], x_limits[0], x_limits[1])
@@ -376,9 +402,7 @@ class PlugAwarePolicy(Policy):
             ],
             dtype=np.float32,
         )
-        blend_xyz = (
-            position_fraction * target_xyz + (1.0 - position_fraction) * tcp_xyz
-        )
+        blend_xyz = position_fraction * target_xyz + (1.0 - position_fraction) * tcp_xyz
 
         return Pose(
             position=Point(

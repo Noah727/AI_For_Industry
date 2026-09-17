@@ -66,7 +66,9 @@ class TargetTcpPoseInference:
         images = torch.stack(
             [
                 RelativePortPoseInference.image_array_to_tensor(
-                    RelativePortPoseInference.image_msg_to_array(self, image_by_key[key])
+                    RelativePortPoseInference.image_msg_to_array(
+                        self, image_by_key[key]
+                    )
                 )
                 for key in self.camera_keys
             ],

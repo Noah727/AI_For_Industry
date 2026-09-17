@@ -17,7 +17,9 @@ from aic_submission.perception.relative_dataset import (
     RelativePortPoseDataset,
     task_name_from_id,
 )
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 def _cap_samples(
@@ -143,7 +145,9 @@ def main() -> int:
             delta = pred_port - port_xyz
             relative_delta = pred_relative - target_relative
             errors = torch.linalg.vector_norm(delta, dim=-1).cpu().numpy()
-            relative_errors = torch.linalg.vector_norm(relative_delta, dim=-1).cpu().numpy()
+            relative_errors = (
+                torch.linalg.vector_norm(relative_delta, dim=-1).cpu().numpy()
+            )
             axis_errors = torch.abs(delta).cpu().numpy()
             task_ids = batch["task_id"].cpu().numpy()
 
@@ -176,7 +180,9 @@ def main() -> int:
             "y": float(np.mean(axis_mm[:, 1])),
             "z": float(np.mean(axis_mm[:, 2])),
         },
-        "by_task": {name: _summarize(errors) for name, errors in sorted(by_task.items())},
+        "by_task": {
+            name: _summarize(errors) for name, errors in sorted(by_task.items())
+        },
         "by_stage": {
             name: _summarize(errors) for name, errors in sorted(by_stage.items())
         },

@@ -13,7 +13,9 @@ from aic_submission.perception.relative_dataset import (
     DEFAULT_CAMERA_KEYS,
     task_id_from_vector,
 )
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 class ScenePoseInference(PlugAwarePoseInference):

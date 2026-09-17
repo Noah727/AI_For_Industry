@@ -10,7 +10,9 @@ from aic_submission.perception.relative_dataset import (
     task_id_from_vector,
 )
 from aic_submission.perception.dataset import task_vector_from_task
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 class RelativePortPoseInference:

@@ -55,7 +55,9 @@ def run_epoch(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("/tmp/aic_teacher_dataset"))
-    parser.add_argument("--output-dir", type=Path, default=Path("AIC_SUBMISSION/runs/port_pose_smoke"))
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("AIC_SUBMISSION/runs/port_pose_smoke")
+    )
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=1.0e-4)

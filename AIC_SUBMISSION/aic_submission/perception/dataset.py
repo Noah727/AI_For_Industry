@@ -88,15 +88,15 @@ def task_vector_dim(mode: str = "basic") -> int:
     return len(_task_vector_from_fields(empty_task, mode=mode))
 
 
-def discover_teacher_samples(root: Path, task_vector_mode: str = "basic") -> list[SampleRef]:
+def discover_teacher_samples(
+    root: Path, task_vector_mode: str = "basic"
+) -> list[SampleRef]:
     samples: list[SampleRef] = []
     for episode_dir in sorted(p for p in root.iterdir() if p.is_dir()):
         metadata_path = episode_dir / "metadata.json"
         if not metadata_path.exists():
             continue
-        task_vector = _task_vector(
-            _load_metadata(metadata_path), mode=task_vector_mode
-        )
+        task_vector = _task_vector(_load_metadata(metadata_path), mode=task_vector_mode)
         for sample_path in sorted(episode_dir.glob("sample_*.npz")):
             samples.append(
                 SampleRef(
@@ -134,7 +134,9 @@ def split_by_episode(
         val_count = max(1, round(len(episode_tasks) * validation_fraction))
         val_episodes = set(sorted(episode_tasks)[-val_count:])
 
-    train_samples = [sample for sample in samples if sample.episode_name not in val_episodes]
+    train_samples = [
+        sample for sample in samples if sample.episode_name not in val_episodes
+    ]
     val_samples = [sample for sample in samples if sample.episode_name in val_episodes]
     return train_samples, val_samples
 

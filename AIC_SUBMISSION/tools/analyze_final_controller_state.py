@@ -37,12 +37,19 @@ def quat_xyzw_to_matrix(quat: np.ndarray) -> np.ndarray:
 
 
 def pose_xyz(pose) -> np.ndarray:
-    return np.array([pose.position.x, pose.position.y, pose.position.z], dtype=np.float64)
+    return np.array(
+        [pose.position.x, pose.position.y, pose.position.z], dtype=np.float64
+    )
 
 
 def pose_quat(pose) -> np.ndarray:
     return np.array(
-        [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w],
+        [
+            pose.orientation.x,
+            pose.orientation.y,
+            pose.orientation.z,
+            pose.orientation.w,
+        ],
         dtype=np.float64,
     )
 
@@ -56,7 +63,11 @@ def read_final(bag_dir: Path):
     types = {topic.name: topic.type for topic in reader.get_all_topics_and_types()}
     controller_type = get_message(types["/aic_controller/controller_state"])
     command_type = get_message(types["/aic_controller/pose_commands"])
-    event_type = get_message(types["/scoring/insertion_event"]) if "/scoring/insertion_event" in types else None
+    event_type = (
+        get_message(types["/scoring/insertion_event"])
+        if "/scoring/insertion_event" in types
+        else None
+    )
 
     first_tcp = None
     last_tcp = None
@@ -116,7 +127,9 @@ def main() -> None:
     print(f"events: {events}")
     print(f"first_tcp_xyz: {fmt(pose_xyz(first_tcp))}")
     print(f"last_tcp_xyz:  {fmt(tcp_xyz)}")
-    print(f"last_tcp_qxyzw: ({tcp_quat[0]: .6f}, {tcp_quat[1]: .6f}, {tcp_quat[2]: .6f}, {tcp_quat[3]: .6f})")
+    print(
+        f"last_tcp_qxyzw: ({tcp_quat[0]: .6f}, {tcp_quat[1]: .6f}, {tcp_quat[2]: .6f}, {tcp_quat[3]: .6f})"
+    )
     print(f"last_cmd_xyz:  {fmt(cmd_xyz)}")
     print(f"port_xyz:      {fmt(port)}")
     print(f"actual_plug:   {fmt(plug_xyz)}")

@@ -18,7 +18,9 @@ def pose_xyz_from_transform(transform):
 
 
 def pose_xyz_from_pose(pose):
-    return np.array([pose.position.x, pose.position.y, pose.position.z], dtype=np.float64)
+    return np.array(
+        [pose.position.x, pose.position.y, pose.position.z], dtype=np.float64
+    )
 
 
 def quat_xyzw_to_matrix(quat: np.ndarray) -> np.ndarray:
@@ -74,11 +76,11 @@ def read_bag(uri: Path):
     reader = rosbag2_py.SequentialReader()
     reader.open(
         rosbag2_py.StorageOptions(uri=str(uri), storage_id="mcap"),
-        rosbag2_py.ConverterOptions(input_serialization_format="cdr", output_serialization_format="cdr"),
+        rosbag2_py.ConverterOptions(
+            input_serialization_format="cdr", output_serialization_format="cdr"
+        ),
     )
-    type_map = {
-        topic.name: topic.type for topic in reader.get_all_topics_and_types()
-    }
+    type_map = {topic.name: topic.type for topic in reader.get_all_topics_and_types()}
     msg_types = {topic: get_message(type_name) for topic, type_name in type_map.items()}
     relevant_topics = {
         "/scoring/tf",
@@ -154,13 +156,19 @@ def main() -> None:
 
     print(f"bag: {args.bag_dir}")
     print(f"insertion_events: {data['insertion_events']}")
-    if data["first_controller_pose"] is not None and data["last_controller_pose"] is not None:
+    if (
+        data["first_controller_pose"] is not None
+        and data["last_controller_pose"] is not None
+    ):
         print_vector("first tcp", pose_xyz_from_pose(data["first_controller_pose"]))
         print_vector("last tcp ", pose_xyz_from_pose(data["last_controller_pose"]))
 
     if data["first_pose_command"] is not None:
         print("pose_command type:", type(data["first_pose_command"]).__name__)
-        print("pose_command fields:", data["first_pose_command"].get_fields_and_field_types())
+        print(
+            "pose_command fields:",
+            data["first_pose_command"].get_fields_and_field_types(),
+        )
 
     interesting = [
         ("sfp_port_0", ["sfp_port_0"]),
@@ -175,7 +183,9 @@ def main() -> None:
             continue
         print(f"\n{label} matches:")
         for parent, child, _, transform in matches[:10]:
-            print_vector(f"  {parent}->{child}", pose_xyz_from_transform(transform.transform))
+            print_vector(
+                f"  {parent}->{child}", pose_xyz_from_transform(transform.transform)
+            )
 
     global_frames = [
         "task_board/nic_card_mount_0/sfp_port_0_link",

@@ -36,7 +36,9 @@ def _rpy_to_matrix(roll: float, pitch: float, yaw: float) -> np.ndarray:
     return (rz @ ry @ rx).astype(np.float32)
 
 
-def _matrix_from_xyz_rpy(xyz: tuple[float, float, float], rpy: tuple[float, float, float]) -> np.ndarray:
+def _matrix_from_xyz_rpy(
+    xyz: tuple[float, float, float], rpy: tuple[float, float, float]
+) -> np.ndarray:
     matrix = np.eye(4, dtype=np.float32)
     matrix[:3, :3] = _rpy_to_matrix(*rpy)
     matrix[:3, 3] = np.asarray(xyz, dtype=np.float32)
@@ -109,7 +111,9 @@ def _tool0_to_camera_optical(camera_prefix: str) -> np.ndarray:
         (0.0, 0.0, 0.0),
         (-1.5708, 0.0, -1.5708),
     )
-    return tool0_to_cam_mount @ camera_mount_to_link @ link_to_sensor @ sensor_to_optical
+    return (
+        tool0_to_cam_mount @ camera_mount_to_link @ link_to_sensor @ sensor_to_optical
+    )
 
 
 def _tcp_to_camera_optical(camera_prefix: str) -> np.ndarray:
@@ -209,7 +213,9 @@ def discover_keypoint_samples(
                 keys = set(data.files)
                 has_enriched_camera = required_camera.issubset(keys)
                 has_legacy_camera = "tcp_pose_base" in keys
-                if required_base.issubset(keys) and (has_enriched_camera or has_legacy_camera):
+                if required_base.issubset(keys) and (
+                    has_enriched_camera or has_legacy_camera
+                ):
                     refs.append(
                         KeypointSampleRef(
                             sample=sample,

@@ -16,7 +16,9 @@ from aic_submission.perception.plug_aware_dataset import (
     compute_plug_aware_target_stats,
 )
 from aic_submission.perception.relative_dataset import DEFAULT_CAMERA_KEYS
-from aic_submission.perception.relative_model import MultiCameraRelativePortPoseRegressor
+from aic_submission.perception.relative_model import (
+    MultiCameraRelativePortPoseRegressor,
+)
 
 
 def _cap_samples(
@@ -76,7 +78,9 @@ def run_epoch(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100"))
+    parser.add_argument(
+        "--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100")
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -153,8 +157,7 @@ def main() -> int:
         "camera_keys": list(camera_keys),
         "output_dim": 14,
         "target_layout": (
-            "port_relative_xyz plug_relative_xyz "
-            "port_quat_xyzw plug_quat_xyzw"
+            "port_relative_xyz plug_relative_xyz " "port_quat_xyzw plug_quat_xyzw"
         ),
     }
     history = {

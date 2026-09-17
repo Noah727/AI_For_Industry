@@ -83,9 +83,7 @@ class DefaultTrajectoryPolicy(Policy):
             )
         )
 
-    def _interpolated_pose_values(
-        self, poses: list[list[float]]
-    ) -> list[list[float]]:
+    def _interpolated_pose_values(self, poses: list[list[float]]) -> list[list[float]]:
         if self._interp_steps <= 1 or len(poses) < 2:
             return poses
 

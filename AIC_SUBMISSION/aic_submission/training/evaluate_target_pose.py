@@ -78,7 +78,9 @@ def main() -> int:
         type=Path,
         default=Path("AIC_SUBMISSION/runs/target_pose_100ep/best_model.pt"),
     )
-    parser.add_argument("--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100"))
+    parser.add_argument(
+        "--root", type=Path, default=Path("/tmp/aic_teacher_dataset_100")
+    )
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--split", choices=("val", "all"), default="val")

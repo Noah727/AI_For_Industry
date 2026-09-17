@@ -155,10 +155,7 @@ def inspect_dataset(root: Path, max_errors: int) -> int:
     print(f"Center image shapes: {dict(image_shapes)}")
 
     if z_offsets:
-        print(
-            "z_offset range: "
-            f"{min(z_offsets):.5f} to {max(z_offsets):.5f}"
-        )
+        print("z_offset range: " f"{min(z_offsets):.5f} to {max(z_offsets):.5f}")
 
     for task_name, points in port_xyz_by_task.items():
         xyz = np.stack(points, axis=0)

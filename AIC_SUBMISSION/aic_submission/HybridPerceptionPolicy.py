@@ -58,7 +58,9 @@ class HybridPerceptionPolicy(PlugAwarePolicy):
             f"val_loss={self._port_predictor.checkpoint_val_loss}"
         )
 
-    def _filter_relative_port_xyz(self, raw_port_xyz: np.ndarray, task: Task) -> np.ndarray:
+    def _filter_relative_port_xyz(
+        self, raw_port_xyz: np.ndarray, task: Task
+    ) -> np.ndarray:
         port_xyz = raw_port_xyz.astype(np.float32, copy=True)
         if self._clamp_port_xy and task.port_type in self.PORT_XY_LIMITS_BY_PORT_TYPE:
             x_limits, y_limits = self.PORT_XY_LIMITS_BY_PORT_TYPE[task.port_type]

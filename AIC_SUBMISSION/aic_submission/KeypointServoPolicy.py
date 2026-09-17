@@ -42,7 +42,9 @@ class KeypointServoPolicy(PlugAwarePolicy):
         self._keypoint_min_confidence = float(
             os.environ.get("AIC_KEYPOINT_MIN_CONFIDENCE", "0.45")
         )
-        self._keypoint_gain = float(os.environ.get("AIC_KEYPOINT_CORRECTION_GAIN", "0.30"))
+        self._keypoint_gain = float(
+            os.environ.get("AIC_KEYPOINT_CORRECTION_GAIN", "0.30")
+        )
         self._keypoint_max_correction_m = float(
             os.environ.get("AIC_KEYPOINT_MAX_CORRECTION_M", "0.012")
         )

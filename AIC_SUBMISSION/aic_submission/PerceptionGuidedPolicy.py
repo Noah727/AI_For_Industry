@@ -75,7 +75,10 @@ class PerceptionGuidedPolicy(Policy):
                     image_stride=image_stride,
                 )
         self._orientation_predictor = None
-        if os.environ.get("AIC_PERCEPTION_ORIENTATION_SOURCE", "fixed") == "target_pose":
+        if (
+            os.environ.get("AIC_PERCEPTION_ORIENTATION_SOURCE", "fixed")
+            == "target_pose"
+        ):
             default_orientation_checkpoint = (
                 Path(__file__).resolve().parents[1]
                 / "runs"
@@ -140,9 +143,9 @@ class PerceptionGuidedPolicy(Policy):
         self._plug_filter_alpha = float(
             os.environ.get("AIC_PERCEPTION_PLUG_FILTER_ALPHA", "0.80")
         )
-        self._learned_plug_mode = os.environ.get(
-            "AIC_PERCEPTION_LEARNED_PLUG_MODE", "xyz"
-        ).strip().lower()
+        self._learned_plug_mode = (
+            os.environ.get("AIC_PERCEPTION_LEARNED_PLUG_MODE", "xyz").strip().lower()
+        )
         self._learned_plug_after_z = float(
             os.environ.get("AIC_PERCEPTION_LEARNED_PLUG_AFTER_Z", "0.03")
         )
@@ -153,9 +156,7 @@ class PerceptionGuidedPolicy(Policy):
         self._use_ground_truth_port = (
             os.environ.get("AIC_USE_GROUND_TRUTH_PORT", "0") == "1"
         )
-        self._debug_log_every = max(
-            1, int(os.environ.get("AIC_DEBUG_LOG_EVERY", "20"))
-        )
+        self._debug_log_every = max(1, int(os.environ.get("AIC_DEBUG_LOG_EVERY", "20")))
         self._freeze_port_after = int(
             os.environ.get("AIC_PERCEPTION_FREEZE_PORT_AFTER", "0")
         )
@@ -163,7 +164,9 @@ class PerceptionGuidedPolicy(Policy):
             "sfp": float(os.environ.get("AIC_SFP_FINAL_Z_OFFSET", "-0.015")),
             "sc": float(os.environ.get("AIC_SC_FINAL_Z_OFFSET", "-0.015")),
         }
-        self._insert_step = float(os.environ.get("AIC_PERCEPTION_INSERT_STEP", "0.0005"))
+        self._insert_step = float(
+            os.environ.get("AIC_PERCEPTION_INSERT_STEP", "0.0005")
+        )
         self._lateral_search_amplitude_by_port_type = {
             "sfp": float(os.environ.get("AIC_SFP_LATERAL_SEARCH_AMPLITUDE", "0.0")),
             "sc": float(os.environ.get("AIC_SC_LATERAL_SEARCH_AMPLITUDE", "0.0")),
@@ -178,7 +181,9 @@ class PerceptionGuidedPolicy(Policy):
             os.environ.get("AIC_LATERAL_SEARCH_INSERT_STEP", "0.004")
         )
         self._lateral_search_entry_z_by_port_type = {
-            "sfp": float(os.environ.get("AIC_SFP_LATERAL_SEARCH_ENTRY_Z_OFFSET", "nan")),
+            "sfp": float(
+                os.environ.get("AIC_SFP_LATERAL_SEARCH_ENTRY_Z_OFFSET", "nan")
+            ),
             "sc": float(os.environ.get("AIC_SC_LATERAL_SEARCH_ENTRY_Z_OFFSET", "nan")),
         }
         self._keep_lateral_search_bias = (
@@ -243,8 +248,7 @@ class PerceptionGuidedPolicy(Policy):
         )
         if self._port_bias_by_target:
             self.get_logger().info(
-                "Using target-specific port bias map: "
-                f"{self._port_bias_by_target}"
+                "Using target-specific port bias map: " f"{self._port_bias_by_target}"
             )
         for key, predictor in self._specialist_predictors.items():
             self.get_logger().info(
@@ -340,7 +344,9 @@ class PerceptionGuidedPolicy(Policy):
 
         learned_port_xyz = None
         if not self._use_ground_truth_port or self._debug_ground_truth:
-            learned_port_xyz = self._predictor_for_task(task).predict_port_xyz(obs, task)
+            learned_port_xyz = self._predictor_for_task(task).predict_port_xyz(
+                obs, task
+            )
 
         if self._use_ground_truth_port and ground_truth_port_xyz is not None:
             raw_port_xyz = ground_truth_port_xyz
@@ -417,7 +423,10 @@ class PerceptionGuidedPolicy(Policy):
             dtype=np.float32,
         )
         quat = self._normalize_quat_xyzw(quat).astype(np.float32)
-        if self._freeze_port_after > 0 and self._prediction_count >= self._freeze_port_after:
+        if (
+            self._freeze_port_after > 0
+            and self._prediction_count >= self._freeze_port_after
+        ):
             self._frozen_target_quat_xyzw = quat.copy()
             self.get_logger().info(
                 "Freezing target TCP orientation: "
@@ -453,7 +462,10 @@ class PerceptionGuidedPolicy(Policy):
             self.TCP_TO_PLUG_TRANSLATION_BY_PLUG_TYPE[plug_type]
         ).astype(np.float32)
         plug_delta = learned.plug_xyz.astype(np.float32) - nominal_plug_xyz
-        if self._learned_plug_gate_m > 0.0 and np.linalg.norm(plug_delta) > self._learned_plug_gate_m:
+        if (
+            self._learned_plug_gate_m > 0.0
+            and np.linalg.norm(plug_delta) > self._learned_plug_gate_m
+        ):
             if self._prediction_count % self._debug_log_every == 0:
                 self.get_logger().warn(
                     "Rejecting learned plug outlier: "
@@ -559,8 +571,7 @@ class PerceptionGuidedPolicy(Policy):
             return port_xyz
         corrected = port_xyz.copy()
         corrected[:2] = (
-            corrected[:2]
-            + self._keypoint_gain * self._filtered_visual_correction[:2]
+            corrected[:2] + self._keypoint_gain * self._filtered_visual_correction[:2]
         )
         return corrected.astype(np.float32)
 
@@ -708,9 +719,15 @@ class PerceptionGuidedPolicy(Policy):
         )
 
         plug_type = (
-            task.plug_type if task.plug_type in self.TCP_TO_PLUG_TRANSLATION_BY_PLUG_TYPE else "sfp"
+            task.plug_type
+            if task.plug_type in self.TCP_TO_PLUG_TRANSLATION_BY_PLUG_TYPE
+            else "sfp"
         )
-        port_type = task.port_type if task.port_type in self.PORT_QUAT_XYZW_BY_PORT_TYPE else plug_type
+        port_type = (
+            task.port_type
+            if task.port_type in self.PORT_QUAT_XYZW_BY_PORT_TYPE
+            else plug_type
+        )
 
         tcp_rotation = self._quat_xyzw_to_matrix(tcp_quat_xyzw)
         tcp_to_plug_translation = self.TCP_TO_PLUG_TRANSLATION_BY_PLUG_TYPE[plug_type]
